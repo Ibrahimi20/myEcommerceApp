@@ -2,6 +2,7 @@ import { Container, Navbar } from 'react-bootstrap';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import HomeScreen from './screens/HomeScreen';
 import React from 'react';
+import ProductScreen from './screens/ProductScreen';
 function App() {
   return (
     <BrowserRouter>
@@ -14,9 +15,12 @@ function App() {
           </Navbar>
         </header>
         <main>
-          <Routes>
-            <Route path="/" element={<HomeScreen />}></Route>
-          </Routes>
+          <Container className="mt-3">
+            <Routes>
+              <Route path="/" element={<HomeScreen />}></Route>
+              <Route path="/product/:slug" element={<ProductScreen />} />
+            </Routes>
+          </Container>
         </main>
 
         <footer className="text-center">ALL RIGHT RESERVED</footer>

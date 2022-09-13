@@ -4,6 +4,7 @@ import HomeScreen from './screens/HomeScreen';
 import React, { useContext } from 'react';
 import ProductScreen from './screens/ProductScreen';
 import { Store } from './Store';
+import CartsScreen from './screens/CartsScreen';
 function App() {
   const { state } = useContext(Store);
   const { cart } = state;
@@ -13,24 +14,28 @@ function App() {
         <header>
           <Navbar bg="dark" variant="dark">
             <Container>
-              <Navbar.Brand href="/">Logo</Navbar.Brand>
+              <Navbar.Brand>
+                <Link to="/">Logo</Link>
+              </Navbar.Brand>
+
+              <Nav className="me-auto">
+                <Link className="nav-link" to="/cart">
+                  Cart
+                  {cart.carteItem.length > 0 && (
+                    <Badge pill bg="danger">
+                      {cart.carteItem.reduce((a, c) => a + c.quantity, 0)}
+                    </Badge>
+                  )}
+                </Link>
+              </Nav>
             </Container>
-            <Nav className="me-auto">
-              <Link className="nav-link" to="/cart">
-                Cart
-                {cart.carteItem.length > 0 && (
-                  <Badge pill bg="danger">
-                    {cart.carteItem.length}
-                  </Badge>
-                )}
-              </Link>
-            </Nav>
           </Navbar>
         </header>
         <main>
           <Container className="mt-3">
             <Routes>
               <Route path="/" element={<HomeScreen />}></Route>
+              <Route path="/cart" element={<CartsScreen />} />
               <Route path="/product/:slug" element={<ProductScreen />} />
             </Routes>
           </Container>

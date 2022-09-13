@@ -31,3 +31,7 @@ code {
 .img-large {
   max-width: 60%;
 }
+
+.img-thumbnail {
+  height: 80px;
+}

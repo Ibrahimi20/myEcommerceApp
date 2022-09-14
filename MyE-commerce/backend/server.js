@@ -1,29 +1,22 @@
 import express from 'express';
 import data from './data.js';
-
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import seedRoute from './routes/seedRoute.js';
+import productRoute from './routes/ProductRoute.js';
+dotenv.config();
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log(`db connected`);
+  })
+  .catch((err) => {
+    console.log(err.message);
+  });
 const app = express();
 
-app.get('/api/products', (req, res) => {
-  res.send(data.products);
-});
-
-app.get('/api/products/slug/:slug', (req, res) => {
-  const product = data.products.find((x) => x.slug === req.params.slug);
-  if (product) {
-    res.send(product);
-  } else {
-    res.status(404).send({ message: 'Product not found' });
-  }
-});
-
-app.get('/api/products/:id', (req, res) => {
-  const product = data.products.find((x) => x._id === req.params.id);
-  if (product) {
-    res.send(product);
-  } else {
-    res.status(404).send({ message: 'Product is out of stock' });
-  }
-});
+app.use('/api/seed', seedRoute);
+app.use('/api/products', productRoute);
 
 const port = process.env.PORT || 5000;
 

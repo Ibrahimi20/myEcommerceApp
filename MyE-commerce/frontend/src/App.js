@@ -1,10 +1,12 @@
-import { Badge, CarouselItem, Container, Nav, Navbar } from 'react-bootstrap';
+import { Badge, Container, Nav, Navbar } from 'react-bootstrap';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import HomeScreen from './screens/HomeScreen';
 import React, { useContext } from 'react';
 import ProductScreen from './screens/ProductScreen';
 import { Store } from './Store';
 import CartsScreen from './screens/CartsScreen';
+import { LinkContainer } from 'react-router-bootstrap';
+import SigninScreen from './screens/signinScreen';
 function App() {
   const { state } = useContext(Store);
   const { cart } = state;
@@ -14,9 +16,9 @@ function App() {
         <header>
           <Navbar bg="dark" variant="dark">
             <Container>
-              <Navbar.Brand>
-                <Link to="/">Logo</Link>
-              </Navbar.Brand>
+              <LinkContainer to="/">
+                <Navbar.Brand>Logo</Navbar.Brand>
+              </LinkContainer>
 
               <Nav className="me-auto">
                 <Link className="nav-link" to="/cart">
@@ -37,6 +39,7 @@ function App() {
               <Route path="/" element={<HomeScreen />}></Route>
               <Route path="/cart" element={<CartsScreen />} />
               <Route path="/product/:slug" element={<ProductScreen />} />
+              <Route path="/signin" element={<SigninScreen />} />
             </Routes>
           </Container>
         </main>

@@ -1,28 +1,57 @@
-import React from 'react';
-import { Card } from 'react-bootstrap';
+import axios from 'axios';
+import React, { useContext } from 'react';
+import { Button, Card } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
+import { Store } from '../Store';
 import Rating from './Rating';
 
 export default function Product(props) {
+  const { state, dispatch: ctxdispatch } = useContext(Store);
+  const {
+    cart: { carteItem },
+  } = state;
+  const updateCartHandler = async (item) => {
+    const existitem = carteItem.find((x) => x._id === item._id);
+    const quantity = existitem ? existitem.quantity + 1 : 1;
+    const res = await axios.get(`/api/products/${item._id}`);
+    if (res.data.countInStock < quantity) {
+      window.alert('Sorry, Product is out of stock');
+      return;
+    }
+    ctxdispatch({
+      type: 'ADD_TO_CART',
+      payload: { ...item, quantity },
+    });
+  };
+
   return (
     <Card className="product">
-      <a href={`/product/${props.product.slug}`}>
+      <LinkContainer to={`/product/${props.product.slug}`}>
         <img
           className="card-img-top"
           src={props.product.image}
           alt={props.product.name}
         />
-      </a>
+      </LinkContainer>
       <Card.Body>
-        <a href={`/product/${props.product.slug}`}>
+        <LinkContainer to={`/product/${props.product.slug}`}>
           <Card.Title>{props.product.name}</Card.Title>
-        </a>
+        </LinkContainer>
 
         <Rating
           rating={props.product.rating}
           numReviews={props.product.numReviews}
         ></Rating>
         <Card.Text>${props.product.price}</Card.Text>
-        <button>Add to Cart</button>
+        {props.product.countInStock === 0 ? (
+          <Button variant="light" disabled>
+            Out Of Stock
+          </Button>
+        ) : (
+          <button onClick={() => updateCartHandler(props.product)}>
+            Add to Cart
+          </button>
+        )}
       </Card.Body>
     </Card>
   );

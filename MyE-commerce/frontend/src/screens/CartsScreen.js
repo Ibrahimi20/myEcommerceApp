@@ -2,10 +2,11 @@ import axios from 'axios';
 import React, { useContext } from 'react';
 import { Button, Card, Col, ListGroup, Row } from 'react-bootstrap';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import MessageBox from '../component/MessageBox';
 import { Store } from '../Store';
 export default function CartsScreen() {
+  const navigate = useNavigate();
   const { state, dispatch: ctxdispatch } = useContext(Store);
   const {
     cart: { carteItem },
@@ -28,6 +29,10 @@ export default function CartsScreen() {
       type: 'CART_REMOVE_ITEM',
       payload: item,
     });
+  };
+
+  const checkoutHandler = () => {
+    navigate('/signin?redirect=/shipping');
   };
   return (
     <div>
@@ -106,6 +111,7 @@ export default function CartsScreen() {
                 <ListGroup.Item>
                   <div className="d-grid">
                     <Button
+                      onClick={() => checkoutHandler()}
                       type="button"
                       variant="primary"
                       disabled={carteItem.length === 0}

@@ -1,4 +1,7 @@
-import { Badge, Container, Nav, Navbar } from 'react-bootstrap';
+import { Badge, Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import HomeScreen from './screens/HomeScreen';
 import React, { useContext } from 'react';
@@ -8,11 +11,16 @@ import CartsScreen from './screens/CartsScreen';
 import { LinkContainer } from 'react-router-bootstrap';
 import SigninScreen from './screens/signinScreen';
 function App() {
-  const { state } = useContext(Store);
-  const { cart } = state;
+  const { state, dispatch: ctxdispatcher } = useContext(Store);
+  const { cart, userinfo } = state;
+  const signoutHandler = () => {
+    ctxdispatcher({ type: 'SIGN_OUT' });
+    localStorage.removeItem('userInfo');
+  };
   return (
     <BrowserRouter>
       <div className="d-flex flex-column site-container">
+        <ToastContainer position="bottom-center" limit={1}></ToastContainer>
         <header>
           <Navbar bg="dark" variant="dark">
             <Container>
@@ -29,6 +37,28 @@ function App() {
                     </Badge>
                   )}
                 </Link>
+                {userinfo ? (
+                  <NavDropdown title={userinfo.name} id="basic-nav-dropdown">
+                    <LinkContainer to="/profile">
+                      <NavDropdown.Item>User Profile</NavDropdown.Item>
+                    </LinkContainer>
+                    <LinkContainer to="orderhistory">
+                      <NavDropdown.Item>Order History</NavDropdown.Item>
+                    </LinkContainer>
+                    <NavDropdown.Divider />
+                    <Link
+                      className="dropdown-item"
+                      to="#signout"
+                      onClick={signoutHandler}
+                    >
+                      Sign Out
+                    </Link>
+                  </NavDropdown>
+                ) : (
+                  <Link className="nav-link" to="/signin">
+                    Sign In
+                  </Link>
+                )}
               </Nav>
             </Container>
           </Navbar>

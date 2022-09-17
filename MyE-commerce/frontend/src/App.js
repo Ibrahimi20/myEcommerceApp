@@ -10,12 +10,17 @@ import { Store } from './Store';
 import CartsScreen from './screens/CartsScreen';
 import { LinkContainer } from 'react-router-bootstrap';
 import SigninScreen from './screens/signinScreen';
+import ShippingAdressScreen from './screens/ShippingAdressScreen';
+import SignUpScreen from './screens/signupScreen';
+import PaymentMethodScreen from './screens/PaymentMethodScreen';
 function App() {
   const { state, dispatch: ctxdispatcher } = useContext(Store);
   const { cart, userinfo } = state;
   const signoutHandler = () => {
     ctxdispatcher({ type: 'SIGN_OUT' });
     localStorage.removeItem('userInfo');
+    localStorage.removeItem('shippingAdress');
+    localStorage.removeItem('paymentMethod');
   };
   return (
     <BrowserRouter>
@@ -70,6 +75,9 @@ function App() {
               <Route path="/cart" element={<CartsScreen />} />
               <Route path="/product/:slug" element={<ProductScreen />} />
               <Route path="/signin" element={<SigninScreen />} />
+              <Route path="/shipping" element={<ShippingAdressScreen />} />
+              <Route path="/signup" element={<SignUpScreen />} />
+              <Route path="/payment" element={<PaymentMethodScreen />} />
             </Routes>
           </Container>
         </main>

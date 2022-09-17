@@ -8,7 +8,7 @@ const initialvalue = {
     : null,
   cart: {
     paymentMethod: localStorage.getItem('paymentMethod')
-      ? JSON.parse(localStorage.getItem('paymentMethod'))
+      ? localStorage.getItem('paymentMethod')
       : '',
     shippingAdress: localStorage.getItem('shippingAdress')
       ? JSON.parse(localStorage.getItem('shippingAdress'))

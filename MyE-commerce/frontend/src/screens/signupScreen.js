@@ -22,26 +22,25 @@ export default function SignUpScreen() {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-
-    if (password === confirmpassword) {
-      console.log('inside If statement');
+    if (!(password === confirmpassword)) {
       toast.error('Passwords do not match');
       return;
-    }
-    try {
-      const { data } = await axios.post('/api/users/signup', {
-        name: name,
-        email: email,
-        password: password,
-        confirmpassword: confirmpassword,
-      });
-      console.log(data);
-      ctxdispatch({ type: 'USER_SIGNIN', payload: data });
-      localStorage.setItem('userInfo', JSON.stringify(data));
-      navigate(redirect || '/');
-      console.log(data);
-    } catch (error) {
-      toast.error(getError(error));
+    } else {
+      try {
+        const { data } = await axios.post('/api/users/signup', {
+          name: name,
+          email: email,
+          password: password,
+          confirmpassword: confirmpassword,
+        });
+        console.log(data);
+        ctxdispatch({ type: 'USER_SIGNIN', payload: data });
+        localStorage.setItem('userInfo', JSON.stringify(data));
+        navigate(redirect || '/');
+        console.log(data);
+      } catch (error) {
+        toast.error(getError(error));
+      }
     }
   };
 

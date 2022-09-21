@@ -17,7 +17,7 @@ export default function PaymentMethodScreen() {
     paymentMethod || 'PayPal'
   );
   useEffect(() => {
-    if (!shippingAdress.adress) {
+    if (!shippingAdress) {
       navigate('/shipping');
     }
   }, [navigate, shippingAdress]);

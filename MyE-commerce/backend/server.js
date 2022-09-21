@@ -5,7 +5,8 @@ import mongoose from 'mongoose';
 import seedRoute from './routes/seedRoute.js';
 import productRoute from './routes/ProductRoute.js';
 import userRouter from './routes/userRoutes.js';
-import cors from 'cors';
+import orderRouter from './routes/orderRoute.js';
+
 dotenv.config();
 mongoose
   .connect(process.env.MONGO_URI)
@@ -18,11 +19,15 @@ mongoose
 const app = express();
 app.use(express.json());
 
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
+app.use('/api/keys/paypal', (req, res) => {
+  res.send(process.env.PAYPAL_CLIENT_ID || 'sb');
+});
 
 app.use('/api/seed', seedRoute);
 app.use('/api/products', productRoute);
-app.use('/api/users', userRouter);
+app.use('/api/users', userRouter); //
+app.use('/api/orders', orderRouter);
 
 const port = process.env.PORT || 5000;
 

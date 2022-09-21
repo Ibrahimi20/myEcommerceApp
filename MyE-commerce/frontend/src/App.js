@@ -14,15 +14,18 @@ import ShippingAdressScreen from './screens/ShippingAdressScreen';
 import SignUpScreen from './screens/signupScreen';
 import PaymentMethodScreen from './screens/PaymentMethodScreen';
 import PlaceOrderScreen from './screens/PlaceOrderScreen';
+import OrderScreen from './screens/OrderScreen';
 function App() {
   const { state, dispatch: ctxdispatcher } = useContext(Store);
   const { cart, userinfo } = state;
+
   const signoutHandler = () => {
     ctxdispatcher({ type: 'SIGN_OUT' });
     localStorage.removeItem('userInfo');
     localStorage.removeItem('shippingAdress');
     localStorage.removeItem('paymentMethod');
   };
+
   return (
     <BrowserRouter>
       <div className="d-flex flex-column site-container">
@@ -80,6 +83,7 @@ function App() {
               <Route path="/signup" element={<SignUpScreen />} />
               <Route path="/payment" element={<PaymentMethodScreen />} />
               <Route path="/placeorder" element={<PlaceOrderScreen />} />
+              <Route path="/order/:id" element={<OrderScreen />}></Route>
             </Routes>
           </Container>
         </main>

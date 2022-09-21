@@ -55,6 +55,10 @@ const reducer = (state, action) => {
           carteItem: Items,
         },
       };
+
+    case 'CART_CLEAR':
+      return { ...state, cart: { ...state.cart, carteItem: [] } };
+
     case 'USER_SIGNIN':
       return { ...state, userinfo: action.payload };
 

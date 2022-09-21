@@ -1,41 +1,88 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useReducer } from 'react';
 import { Button, Card, Col, ListGroup, Row } from 'react-bootstrap';
 import { Helmet } from 'react-helmet-async';
 import { Link, useNavigate } from 'react-router-dom';
 import CheckOutSteps from '../component/CheckOutSteps';
 import { Store } from '../Store';
+import { toast } from 'react-toastify';
+import { getError } from '../utils';
+
+import LoadingBox from '../component/LoadingBox';
+import axios from 'axios';
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'CREATE_REQUEST':
+      return { ...state, loading: true };
+    case 'CREATE_SUCCESS':
+      return { ...state, loading: false };
+    case 'CREATE_FAIL':
+      return { ...state, loading: false };
+    default:
+      return state;
+  }
+};
 
 export default function PlaceOrderScreen() {
   const navigate = useNavigate();
+  const [{ loading }, dispatch] = useReducer(reducer, {
+    loading: false,
+  });
+
   const { state, dispatch: ctxdispatch } = useContext(Store);
-  const {
-    userinfo,
-    cart: { paymentMethod, carteItem, shippingAdress },
-  } = state;
+  const { userinfo, cart } = state;
 
   const round2 = (num) => {
     return Math.round(num * 100 + Number.EPSILON) / 100;
   };
 
-  state.cart.itemsPrice = round2(
-    carteItem.reduce((a, c) => a + c.quantity * c.price, 0)
+  cart.itemsPrice = round2(
+    cart.carteItem.reduce((a, c) => a + c.quantity * c.price, 0)
   );
 
-  state.cart.shippingPrice =
-    state.cart.itemsPrice > 100 ? round2(0) : round2(10);
+  cart.shippingPrice = cart.itemsPrice > 100 ? round2(0) : round2(10);
 
-  state.cart.taxPrice = round2(0.15 * state.cart.itemsPrice);
+  cart.taxPrice = round2(0.15 * cart.itemsPrice);
 
-  state.cart.totalPrice =
-    state.cart.itemsPrice + state.cart.shippingPrice + state.cart.taxPrice;
-
-  const placeOrderHandler = async () => {};
+  cart.totalPrice = cart.itemsPrice + cart.shippingPrice + cart.taxPrice;
 
   useEffect(() => {
-    if (!paymentMethod) {
+    if (!cart.paymentMethod) {
       navigate('/payment');
     }
-  }, [paymentMethod, navigate]);
+  }, [state.paymentMethod, navigate]);
+
+  const placeOrderHandler = async () => {
+    try {
+      dispatch({ type: 'CREATE_REQUEST' });
+
+      const { data } = await axios.post(
+        '/api/orders',
+        {
+          orderItems: cart.carteItem,
+          shippingAddress: cart.shippingAdress,
+          paymentMethod: cart.paymentMethod,
+          itemsPrice: cart.itemsPrice,
+          shippingPrice: cart.shippingPrice,
+          taxPrice: cart.taxPrice,
+          totalPrice: cart.totalPrice,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${userinfo.token}`,
+          },
+        }
+      );
+
+      ctxdispatch({ type: 'CART_CLEAR' });
+      dispatch({ type: 'CREATE_SUCCESS' });
+      localStorage.removeItem('cartitems');
+      navigate(`/order/${data.order._id}`);
+    } catch (error) {
+      dispatch({ type: 'CREATE_FAIL' });
+      toast.error(getError(error));
+    }
+  };
+
   return (
     <div>
       <CheckOutSteps step1 step2 step3 step4></CheckOutSteps>
@@ -50,11 +97,11 @@ export default function PlaceOrderScreen() {
               <Card.Title>Shipping</Card.Title>
               <Card.Text>
                 <strong>Name:</strong>
-                {shippingAdress.fullname}
+                {cart.shippingAdress.fullname}
                 <br />
                 <strong>Address:</strong>
-                {shippingAdress.adress},{shippingAdress.city},
-                {shippingAdress.postalCode},{shippingAdress.country}
+                {cart.shippingAdress.adress},{cart.shippingAdress.city},
+                {cart.shippingAdress.postalCode},{cart.shippingAdress.country}
               </Card.Text>
               <Link to="/shipping">Edit</Link>
             </Card.Body>
@@ -64,7 +111,7 @@ export default function PlaceOrderScreen() {
               <Card.Title>Payment</Card.Title>
               <Card.Text>
                 <strong>Method : </strong>
-                {paymentMethod}
+                {state.paymentMethod}
               </Card.Text>
               <Link to="/payment">Edit</Link>
             </Card.Body>
@@ -74,7 +121,7 @@ export default function PlaceOrderScreen() {
             <Card.Body>
               <Card.Title>Items</Card.Title>
               <ListGroup variant="flush">
-                {carteItem.map((item) => {
+                {cart.carteItem.map((item) => {
                   return (
                     <ListGroup.Item key={item._id}>
                       <Row className="align-items-center">
@@ -143,11 +190,12 @@ export default function PlaceOrderScreen() {
                     <Button
                       type="button"
                       onClick={placeOrderHandler}
-                      disabled={carteItem.length === 0}
+                      disabled={cart.carteItem.length === 0}
                     >
                       Place Order
                     </Button>
                   </div>
+                  {loading && <LoadingBox></LoadingBox>}
                 </ListGroup.Item>
               </ListGroup>
             </Card.Body>

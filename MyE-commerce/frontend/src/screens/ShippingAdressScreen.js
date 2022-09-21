@@ -13,11 +13,13 @@ export default function ShippingAdressScreen() {
   const [fullname, setFullName] = useState(
     state.cart.shippingAdress.fullname || ''
   );
-  const [adress, setadress] = useState(state.cart.shippingAdress.adress || '');
+  const [address, setadress] = useState(
+    state.cart.shippingAdress.address || ''
+  );
   const [postalCode, setpostalCode] = useState(
     state.cart.shippingAdress.postalCode || ''
   );
-  const [city, setcity] = useState(state.cart.shippingAdress.city | '');
+  const [city, setcity] = useState(state.cart.shippingAdress.city || '');
   const [country, setcountry] = useState(
     state.cart.shippingAdress.country || ''
   );
@@ -28,7 +30,7 @@ export default function ShippingAdressScreen() {
       type: 'SAVE_SHIPPING_ADDRESS',
       payload: {
         fullname,
-        adress,
+        address,
         postalCode,
         city,
         country,
@@ -38,7 +40,7 @@ export default function ShippingAdressScreen() {
       'shippingAdress',
       JSON.stringify({
         fullname,
-        adress,
+        address,
         postalCode,
         city,
         country,
@@ -71,12 +73,20 @@ export default function ShippingAdressScreen() {
               value={fullname}
             ></Form.Control>
           </Form.Group>
+          {/* <Form.Group className="mb-3" controlId="fullname">
+            <Form.Label>Full Name</Form.Label>
+            <Form.Control
+              onChange={(e) => setadress(e.target.value)}
+              required
+              value={address}
+            ></Form.Control>
+          </Form.Group> */}
           <Form.Group className="mb-3" controlId="adress">
             <Form.Label>Adress</Form.Label>
             <Form.Control
               onChange={(e) => setadress(e.target.value)}
               required
-              value={adress}
+              value={address}
             ></Form.Control>
           </Form.Group>
           <Form.Group className="mb-3" controlId="city">

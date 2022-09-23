@@ -39,6 +39,7 @@ export default function SigninScreen() {
       navigate(redirect);
     }
   }, [navigate, redirect, state.userinfo]);
+
   return (
     <Container style={{ maxWidth: '600px' }}>
       <Helmet>
